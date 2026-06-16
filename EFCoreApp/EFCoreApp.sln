@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37301.10 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{10D666EC-6514-4FC1-AAA0-878746D9FCF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{6C33C0C9-DAD0-4E6D-A34D-89233119114F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{D0556DB6-1154-452E-B310-404ADF05CDE5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{10D666EC-6514-4FC1-AAA0-878746D9FCF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10D666EC-6514-4FC1-AAA0-878746D9FCF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10D666EC-6514-4FC1-AAA0-878746D9FCF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10D666EC-6514-4FC1-AAA0-878746D9FCF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C33C0C9-DAD0-4E6D-A34D-89233119114F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C33C0C9-DAD0-4E6D-A34D-89233119114F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C33C0C9-DAD0-4E6D-A34D-89233119114F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C33C0C9-DAD0-4E6D-A34D-89233119114F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0556DB6-1154-452E-B310-404ADF05CDE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0556DB6-1154-452E-B310-404ADF05CDE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0556DB6-1154-452E-B310-404ADF05CDE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0556DB6-1154-452E-B310-404ADF05CDE5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2C85804B-0698-4342-8949-3219BF88E998}
+	EndGlobalSection
+EndGlobal
