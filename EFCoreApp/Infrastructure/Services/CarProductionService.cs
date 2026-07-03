@@ -21,14 +21,14 @@ public class CarProductionService(
             var manufacturer = EntityMapper.MapDtoToManufacturer(manufacturerDto);
 
             await this.unitOfWork.ManufacturerRepository.AddAsync(manufacturer);
-            await this.context.SaveChangesAsync();
+            await this.unitOfWork.SaveAsync();
 
             carDto.ManufacturerId = manufacturer.Id;
 
             var car = EntityMapper.MapDtoToCar(carDto);
 
             await this.unitOfWork.CarRepository.AddAsync(car);
-            await this.context.SaveChangesAsync();
+            await this.unitOfWork.SaveAsync();
 
             await transaction.CommitAsync();
 
