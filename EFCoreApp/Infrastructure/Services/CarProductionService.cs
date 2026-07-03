@@ -10,7 +10,7 @@ public class CarProductionService(
     IUnitOfWork unitOfWork)
 {
     private readonly CarProductionDbContext context = context;
-    public IUnitOfWork unitOfWork { get; set; } = unitOfWork;
+    public IUnitOfWork UnitOfWork { get; set; } = unitOfWork;
 
     public async Task<CarDto> CreateCarWithManufacturerAsync(CarDto carDto, ManufacturerDto manufacturerDto)
     {
@@ -20,15 +20,15 @@ public class CarProductionService(
         {
             var manufacturer = EntityMapper.MapDtoToManufacturer(manufacturerDto);
 
-            await this.unitOfWork.ManufacturerRepository.AddAsync(manufacturer);
-            await this.unitOfWork.SaveAsync();
+            await this.UnitOfWork.ManufacturerRepository.AddAsync(manufacturer);
+            await this.UnitOfWork.SaveAsync();
 
             carDto.ManufacturerId = manufacturer.Id;
 
             var car = EntityMapper.MapDtoToCar(carDto);
 
-            await this.unitOfWork.CarRepository.AddAsync(car);
-            await this.unitOfWork.SaveAsync();
+            await this.UnitOfWork.CarRepository.AddAsync(car);
+            await this.UnitOfWork.SaveAsync();
 
             await transaction.CommitAsync();
 
