@@ -1,7 +1,10 @@
-﻿using Data.Data;
+﻿using Data.CustomExceptions;
+using Data.Data;
+using Infrastructure.CustomExceptions;
 using Infrastructure.DTOs;
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 using UI.UI;
 
 namespace UI;
@@ -11,7 +14,7 @@ public sealed class ConsoleApplication(
     ICarService carService,
     IManufacturerService manufacturerService,
     IServiceService serviceService,
-    CarProductionDbContext context) : IDisposable
+    CarProductionDbContext context)
 {
     public async Task RunAsync()
     {
@@ -29,82 +32,149 @@ public sealed class ConsoleApplication(
                 break;
             }
 
-            switch (option)
+            try
             {
-                case "1":
-                    Console.WriteLine("All cars:\n");
-                    ShowCars(await carService.GetAllAsync());
-                    Console.WriteLine("All manufacturers:\n");
-                    ShowManufacturers(await manufacturerService.GetAllAsync());
-                    Console.WriteLine("All services:\n");
-                    ShowServices(await serviceService.GetAllAsync());
-                    break;
-                case "11":
-                    ShowCars(await carService.GetAllAsync());
-                    break;
-                case "12":
-                    ShowManufacturers(await manufacturerService.GetAllAsync());
-                    break;
-                case "13":
-                    ShowServices(await serviceService.GetAllAsync());
-                    break;
-                case "14":
-                    ShowCars(await carService.GetByManufacturerAsync(ConsoleMenu.RequestId()));
-                    break;
-                case "21":
-                    await carService.AddAsync(ConsoleMenu.RequestCarData());
-                    break;
-                case "22":
-                    await manufacturerService.AddAsync(ConsoleMenu.RequestManufacturerData());
-                    break;
-                case "23":
-                    await serviceService.AddAsync(ConsoleMenu.RequestServiceData());
-                    break;
-                case "24":
-                    CarDto car = await carProductionService.CreateCarWithManufacturerAsync(ConsoleMenu.RequestCarData(false), ConsoleMenu.RequestManufacturerData());
-                    ShowCars(new List<CarDto> { car });
-                    break;
-                case "31":
-                    await carService.DeleteAsync(ConsoleMenu.RequestId());
-                    break;
-                case "32":
-                    await manufacturerService.DeleteAsync(ConsoleMenu.RequestId());
-                    break;
-                case "33":
-                    await serviceService.DeleteAsync(ConsoleMenu.RequestId());
-                    break;
-                case "41":
-                    var carId = ConsoleMenu.RequestId();
-                    var carDto = ConsoleMenu.RequestCarData();
+                await ExecuteMenuOptionAsync(option);
+            }
+            catch (ServiceException ex)
+            {
+                PrintError(ex.Message);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                PrintError(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                PrintError(ex.Message);
+            }
+            catch (DbUpdateException ex)
+            {
+                PrintError("A database update error occurred. The operation could not be completed.");
 
-                    carDto.VanId = carId;
-
-                    await carService.UpdateAsync(carDto);
-                    break;
-                case "42":
-                    var manufacturerId = ConsoleMenu.RequestId();
-                    var manufacturerDto = ConsoleMenu.RequestManufacturerData();
-
-                    manufacturerDto.Id = manufacturerId;
-
-                    await manufacturerService.UpdateAsync(manufacturerDto);
-                    break;
-                case "43":
-                    var serviceId = ConsoleMenu.RequestId();
-                    var serviceDto = ConsoleMenu.RequestServiceData();
-
-                    serviceDto.Id = serviceId;
-
-                    await serviceService.UpdateAsync(serviceDto);
-                    break;
-                default:
-                    Console.WriteLine("Enter a valid option.");
-                    break;
+                if (ex.InnerException is not null)
+                {
+                    PrintError($"Details: {ex.InnerException.Message}");
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                PrintError(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                PrintError("An unexpected error occurred.");
+                PrintError(ex.Message);
             }
         }
 
         Console.WriteLine();
-        
+    }
+
+    private async Task ExecuteMenuOptionAsync(string? option)
+    {
+        switch (option)
+        {
+            case "1":
+                Console.WriteLine("All cars:\n");
+                ShowCars(await carService.GetAllAsync());
+
+                Console.WriteLine("All manufacturers:\n");
+                ShowManufacturers(await manufacturerService.GetAllAsync());
+
+                Console.WriteLine("All services:\n");
+                ShowServices(await serviceService.GetAllAsync());
+                break;
+
+            case "11":
+                ShowCars(await carService.GetAllAsync());
+                break;
+
+            case "12":
+                ShowManufacturers(await manufacturerService.GetAllAsync());
+                break;
+
+            case "13":
+                ShowServices(await serviceService.GetAllAsync());
+                break;
+
+            case "14":
+                ShowCars(await carService.GetByManufacturerAsync(ConsoleMenu.RequestId()));
+                break;
+
+            case "21":
+                await carService.AddAsync(ConsoleMenu.RequestCarData());
+                Console.WriteLine("Car was added successfully.");
+                break;
+
+            case "22":
+                await manufacturerService.AddAsync(ConsoleMenu.RequestManufacturerData());
+                Console.WriteLine("Manufacturer was added successfully.");
+                break;
+
+            case "23":
+                await serviceService.AddAsync(ConsoleMenu.RequestServiceData());
+                Console.WriteLine("Service was added successfully.");
+                break;
+
+            case "24":
+                CarDto car = await carProductionService.CreateCarWithManufacturerAsync(
+                    ConsoleMenu.RequestCarData(false),
+                    ConsoleMenu.RequestManufacturerData());
+
+                Console.WriteLine("Car with manufacturer was created successfully.");
+                ShowCars(new List<CarDto> { car });
+                break;
+
+            case "31":
+                await carService.DeleteAsync(ConsoleMenu.RequestId());
+                Console.WriteLine("Car was deleted successfully.");
+                break;
+
+            case "32":
+                await manufacturerService.DeleteAsync(ConsoleMenu.RequestId());
+                Console.WriteLine("Manufacturer was deleted successfully.");
+                break;
+
+            case "33":
+                await serviceService.DeleteAsync(ConsoleMenu.RequestId());
+                Console.WriteLine("Service was deleted successfully.");
+                break;
+
+            case "41":
+                var carId = ConsoleMenu.RequestId();
+                var carDto = ConsoleMenu.RequestCarData();
+
+                carDto.VanId = carId;
+
+                await carService.UpdateAsync(carDto);
+                Console.WriteLine("Car was updated successfully.");
+                break;
+
+            case "42":
+                var manufacturerId = ConsoleMenu.RequestId();
+                var manufacturerDto = ConsoleMenu.RequestManufacturerData();
+
+                manufacturerDto.Id = manufacturerId;
+
+                await manufacturerService.UpdateAsync(manufacturerDto);
+                Console.WriteLine("Manufacturer was updated successfully.");
+                break;
+
+            case "43":
+                var serviceId = ConsoleMenu.RequestId();
+                var serviceDto = ConsoleMenu.RequestServiceData();
+
+                serviceDto.Id = serviceId;
+
+                await serviceService.UpdateAsync(serviceDto);
+                Console.WriteLine("Service was updated successfully.");
+                break;
+
+            default:
+                Console.WriteLine("Enter a valid option.");
+                break;
+        }
     }
 
     private static void ShowCars(IEnumerable<CarDto> cars)
@@ -131,8 +201,8 @@ public sealed class ConsoleApplication(
         }
     }
 
-    public void Dispose()
+    private static void PrintError(string message)
     {
-        context.Dispose();
+        Console.WriteLine($"Error: {message}");
     }
 }
