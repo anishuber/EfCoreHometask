@@ -2,19 +2,30 @@
 
 namespace Data.Data;
 
-public class UnitOfWork(
-    CarProductionDbContext context, 
-    ICarRepository carRepository, 
-    IManufacturerRepository manufacturerRepository, 
-    IServiceRepository serviceRepository) : IUnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
-    private readonly CarProductionDbContext context = context;
+    private readonly CarProductionDbContext context;
+    private readonly ICarRepository carRepository;
+    private readonly IManufacturerRepository manufacturerRepository;
+    private readonly IServiceRepository serviceRepository;
 
-    public ICarRepository CarRepository { get; } = carRepository;
+    public UnitOfWork(
+        CarProductionDbContext context, 
+        ICarRepository carRepository, 
+        IManufacturerRepository manufacturerRepository, 
+        IServiceRepository serviceRepository)
+    {
+        this.context = context;
+        this.carRepository = carRepository ?? throw new ArgumentNullException(nameof(carRepository));
+        this.manufacturerRepository = manufacturerRepository ?? throw new ArgumentNullException(nameof(manufacturerRepository));
+        this.serviceRepository = serviceRepository ?? throw new ArgumentNullException(nameof(serviceRepository));
+    }
 
-    public IManufacturerRepository ManufacturerRepository { get; } = manufacturerRepository;
+    public ICarRepository CarRepository { get => this.carRepository; }
 
-    public IServiceRepository ServiceRepository { get; } = serviceRepository;
+    public IManufacturerRepository ManufacturerRepository { get => this.manufacturerRepository; }
+
+    public IServiceRepository ServiceRepository { get => this.serviceRepository; }
 
     public async Task SaveAsync()
     {
